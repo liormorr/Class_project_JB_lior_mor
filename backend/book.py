@@ -38,7 +38,7 @@ class Book:
             raise Exception("Invalid input, options are 1 / 2 / 3")
 
     def __str__(self):
-        return f"{self._name}, by {self._author}, // Book ID: {self._id}"
+        return f"{self._name}, by '{self._author}', // Book ID: {self._id}"
 
     def __repr__(self):
         return self.__str__()

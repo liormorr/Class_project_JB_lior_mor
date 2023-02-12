@@ -1,16 +1,16 @@
 import pickle
 import re
 
-from backhand.address import Address
-from backhand.book import Book
-from backhand.customer import Customer
-from backhand.library import Library
+from backend.address import Address
+from backend.book import Book
+from backend.customer import Customer
+from backend.library import Library
 
 
 def set_birthday_for_customer():
     while True:
         birth_day = input("Please insert your birth date (DD-MM-YYYY): ")
-        if not re.search('(?:0[1-9]|[12][0-9]|3[01])-(?:0[1-9]|1[012])-(?:19{2}|20[01][0-9]|2020)', birth_day):
+        if not re.search('^[0-3][0-9]-[0-3][0-9]-(?:[0-9][0-9])?[0-9][0-9]$', birth_day):
             print("Error, birthday is invalid")
         else:
             return birth_day
@@ -168,7 +168,7 @@ def set_book_id_for_register():
 def set_book_author_for_register():
     while True:
         book_author = input("Please type the book publisher name: ")
-        if not re.search("^[a-zA-Z\s]+$", book_author):
+        if not re.search("^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$", book_author):
             print("Invalid publisher name, please try again")
             continue
         else:
@@ -235,12 +235,64 @@ def book_from_input():
     return book
 
 
-def librarian_choose():
-    librarian_choice = input("1. Add a new book to the Library? \n2. Display all the current customers? \n"
-                             "3. Display all the current books in the library? \n4. Remove a book from our "
-                             "shelf? \n5. Display all active loans?\n"
-                             "6. Display all late loans\nYour choice: ")
-    return librarian_choice
+def librarian_control_choice():
+    possible_answers = ("1", "2", "3", "$")
+    while True:
+        control_choice = input("1. Library Control\n"
+                               "2. Book Control\n"
+                               "3. Customer Control\n"
+                               "Your choice: ")
+        if control_choice not in possible_answers:
+            print("Invalid input, please try again")
+            continue
+        else:
+            break
+    return control_choice
+
+
+def librarian_library_control_choice():
+    possible_answers = ("1", "2", "3", "4", "$")
+    while True:
+        library_control_choice = input("1. Display all the current customers\n"
+                                       "2. Display all the current books in the library\n"
+                                       "3. Display all active loans\n"
+                                       "4. Display all late loans\n"
+                                       "Your choice: ")
+        if library_control_choice not in possible_answers:
+            print("Invalid input, please try again")
+            continue
+        else:
+            break
+    return library_control_choice
+
+
+def librarian_book_control_choice():
+    possible_answers = ("1", "2", "3", "4", "$")
+    while True:
+        book_control_choice = input("1. Add new book\n"
+                                    "2. Remove a book\n"
+                                    "3. Find book by Name\n"
+                                    "4. Find book by Author\nYour choice: ")
+        if book_control_choice not in possible_answers:
+            print("Invalid input, please try again")
+            continue
+        else:
+            break
+    return book_control_choice
+
+
+def librarian_customer_control_choice():
+    possible_choices = ("1", "2", "3", "$")
+    while True:
+        customer_control_choice = input("1. Display all loans for customer\n"
+                                        "2. Remove Customer\n"
+                                        "3. Find customer by name\n"
+                                        "Your choice: ")
+        if customer_control_choice not in possible_choices:
+            print("Invalid input, please try again")
+            continue
+        else:
+            return customer_control_choice
 
 
 def customer_choose():
@@ -259,9 +311,9 @@ def customer_choose():
 def check_customer_id(customer_id: str, library: Library):
     library_customer_dict: dict = library.display_customers()
     if customer_id in library_customer_dict.keys():
-        return False
-    else:
         return True
+    else:
+        return False
 
 
 def back_to_main_menu():
@@ -286,9 +338,9 @@ def display_books_to_customer(library: Library):
 def main_menu():
     print("How can i assist you? \n1. I am a customer\n2. I want to be a customer\n"
           "3. I am a librarian of this library\nIf you want at any point to exit please type: $")
-    entity = input("choice: ")
     possible_choices = ("1", "2", "3", "$")
     while True:
+        entity = input("choice: ")
         if entity not in possible_choices:
             print("Invalid input, please try again")
             continue

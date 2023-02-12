@@ -1,17 +1,19 @@
 from datetime import datetime, timedelta
 
-from backhand.book import Book
+from backend.book import Book
+from backend.customer import Customer
 
 
 class Loan:
-    def __init__(self, customer_id: str, book_id , loan_date: datetime, return_date: datetime):
-        self._return_date = return_date
+    def __init__(self, customer: Customer, book: Book, loan_date: datetime, loan_end_time: datetime):
+        self._return_date = None
         self._loan_date = loan_date
-        self._book_id = book_id
-        self._customer_id = customer_id
+        self._customer = customer
+        self._book_name = book.get_name()
+        self._loan_end_time = loan_end_time
 
     def get_customer_id(self):
-        return self._customer_id
+        return self._customer.get_id()
 
     def get_loan_date(self):
         return self._loan_date
@@ -27,5 +29,14 @@ class Loan:
             self._return_date = self._return_date - timedelta(days=time_in_days)
             return True
 
+    def get_end_time(self):
+        return self._loan_end_time
 
+    def set_return_date(self, return_date):
+        pass
 
+    def __repr__(self):
+        time = datetime.strftime(datetime.now(), "%d/%m/%Y")
+        end_time = datetime.strftime(self._loan_end_time, "%d/%m/%Y")
+        return f"name: {self._book_name}, Loan started: {time}, Loan should end by: {end_time}, " \
+               f"Loaned by {self._customer}"

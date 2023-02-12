@@ -1,5 +1,7 @@
-from backhand.address import Address
+from backend.address import Address
 import re
+
+from backend.book import Book
 
 
 class Customer:
@@ -33,6 +35,13 @@ class Customer:
             return True
         else:
             raise Exception("Invalid mail, please try again")
+
+    def add_loan(self, book: Book):
+        book_id = book.get_id()
+        self._loaned_books[book_id] = book
+
+    def display_active_loans(self):
+        return self._loaned_books
 
     def __str__(self):
         return f"Customer name: {self._name}, Customer ID: {self._id}"
