@@ -2,6 +2,10 @@ class InvalidBookID(Exception):
     pass
 
 
+class BookNotInLibrary(Exception):
+    pass
+
+
 class InvalidCustomerID(Exception):
     pass
 
@@ -15,6 +19,14 @@ class EmailError(Exception):
 
 
 class CustomerIDError(Exception):
+    pass
+
+
+class CustomerIDExists(Exception):
+    pass
+
+
+class LateLoanExists(Exception):
     pass
 
 
