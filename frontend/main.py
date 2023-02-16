@@ -266,9 +266,12 @@ if __name__ == '__main__':
                     if librarian_book_control == "1":  # Add new book
                         while True:
                             try:
-                                book = book_from_input()
+                                book = book_from_input(library_file)
                             except BookInsertionError:
                                 print("Error in book details.")
+                                continue
+                            except InvalidBookID:
+                                print("Book ID already in our system, choose another one")
                                 continue
                             else:
                                 break
@@ -413,10 +416,8 @@ if __name__ == '__main__':
                             exit(0)
                     break
 
-    # except Exception:
-    #     print("Something went wrong")
+    except Exception:
+        print("Something went wrong")
     finally:
-        pass
-
-        # with open('library.pickle', 'wb') as f:
-        #     pickle.dump(library_file, f)
+        with open('library.pickle', 'wb') as f:
+            pickle.dump(library_file, f)

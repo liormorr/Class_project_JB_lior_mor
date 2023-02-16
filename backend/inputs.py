@@ -162,11 +162,13 @@ def set_book_name_for_register():
             return book_name
 
 
-def set_book_id_for_register():
+def set_book_id_for_register(library: Library):
     while True:
         book_id = input("Please type the book ID: ")
         if not re.search("^[a-zA-Z]{2,}[0-9]*$", book_id):
             raise BookInsertionError
+        if book_id in library.display_books().keys():
+            raise InvalidBookID
         else:
             return book_id
 
@@ -235,12 +237,12 @@ def customer_from_input(library: Library):
     return customer
 
 
-def book_from_input():
+def book_from_input(library: Library):
     name = set_book_name_for_register()
     print("Book ID should contain all the initials of the book\nand a number at the end that"
-          "represent\nthe number of copy of that same book in the library\nfor example: the book"
+          " represent\nthe number of copy of that same book in the library\nfor example: the book"
           " 'Anna Karenina' id will be 'ak1'")
-    book_id = set_book_id_for_register()
+    book_id = set_book_id_for_register(library)
     author = set_book_author_for_register()
     year_published = int(set_year_published_for_register())
     loan_time = set_loan_time_for_register()
