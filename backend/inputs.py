@@ -166,9 +166,19 @@ def set_book_id_for_register():
     while True:
         book_id = input("Please type the book ID: ")
         if not re.search("^[a-zA-Z]{2,}[0-9]*$", book_id):
-            raise BookInsertionError("Invalid ID, please try again")
+            raise BookInsertionError
         else:
             return book_id
+
+
+def search_book_author():
+    while True:
+        book_author = input("Please type the book author name: ")
+        if not re.search("^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$", book_author):
+            raise InvalidInput
+        else:
+            book_author = str(book_author)
+            return book_author.title()
 
 
 def set_book_author_for_register():
@@ -316,6 +326,16 @@ def check_if_loaned(book_id: str, library: Library):
         raise InvalidLoan
     else:
         return True
+
+
+def check_loans_for_customer(customer_id: str, library: Library):
+    for key, value in library.display_customers().items():
+        if key == customer_id:
+            customer = value
+            if len(customer.display_active_loans()) > 0:
+                raise LoanExists
+            else:
+                return True
 
 
 def check_late_loans_for_customer(customer_id: str, library: Library):

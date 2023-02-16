@@ -23,20 +23,16 @@ class Library:
         else:
             return False
 
-    def remove_customer(self, customer: Customer):
+    def remove_customer(self, customer: Customer) -> bool:
         customer_id = customer.get_id()
         customer_loans = customer.display_active_loans()
         if customer_id in self._library_customers.keys() and len(customer_loans) == 0:
             del self._library_customers[customer_id]
             return True
-        else:
-            if customer_id not in self._library_customers.keys():
-                print("We dont recognize that customer")
-            elif len(customer_loans) > 0:
-                print("That customer have active loans, handle it before removing him")
-                return False
 
-    def add_new_book(self, book: Book):
+
+
+    def add_new_book(self, book: Book) -> bool:
         book_id = book.get_id()
         if book_id not in self._library_books:
             self._library_books[book_id] = book
@@ -44,7 +40,8 @@ class Library:
         else:
             return False
 
-    def loan_book(self, book: Book, book_id: str, customer: Customer):
+    def loan_book(self, book: Book, book_id: str, customer: Customer) -> bool:
+        # Checking errors in book id
         if book_id not in self._library_books:
             return False
         # Pulling relevant info about the book and the loan
@@ -52,10 +49,12 @@ class Library:
         date_today = datetime.today()
         # Updating the library database
         loan_end_time = date_today + loan_time
+        # Making sure the loan won't end on weekend
         if loan_end_time.weekday() == 4:
             loan_end_time += timedelta(days=2)
         elif loan_end_time.weekday() == 5:
             loan_end_time += timedelta(days=1)
+        # Setting up the and submitting the loan
         loan = Loan(customer, book, date_today, loan_end_time)
         customer.add_loan(book)
         self._loaned_books[book_id] = loan
@@ -94,10 +93,14 @@ class Library:
         return self._library_name
 
     def get_customer(self, customer_id: str):
+        customer = None
         for key, value in self._library_customers.items():
             if key == customer_id:
                 customer = value
-                return customer
+                break
+        if customer is None:
+            return False
+        return customer
 
     def remove_book(self, book_id: str):
         book_id = book_id

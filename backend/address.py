@@ -13,9 +13,9 @@ class Address:
         return self._city
 
     def get_house_info(self):
-        if not self._level is None:
+        if self._level is not None:
             return self._num, self._level
-        if not self._level is None and self._apartment is None:
+        if self._level is not None and self._apartment is None:
             return self._num, self._level, self._apartment
         else:
             return self._num

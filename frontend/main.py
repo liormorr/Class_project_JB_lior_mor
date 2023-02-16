@@ -122,10 +122,12 @@ if __name__ == '__main__':
                     if len(customer.display_active_loans()) == 0:
                         print("You dont have active loans")
                         print("--- Going back to Main Menu ---")
-                        time.sleep(2)
+                        time.sleep(1)
                         break
                     else:
-                        print(customer.display_active_loans())
+                        print("-- Your Active Loans Are: --")
+                        for value in customer.display_active_loans().values():
+                            print(value)
                     while True:
                         try:
                             return_book_id = input("What is the Book ID: ")
@@ -137,7 +139,9 @@ if __name__ == '__main__':
                             for key, value in library_file.display_loans().items():
                                 if key == return_book_id:
                                     library_file.return_book(value, key, customer)
-                                    print(f"The book: {value} safely returned")
+                                    print(f"The book: {value.get_book_name()} safely returned")
+                                    break
+                            break
                     while True:
                         try:
                             next_step = back_to_main_menu()
@@ -307,8 +311,16 @@ if __name__ == '__main__':
                                 count += 1
                                 continue
                     if librarian_book_control == "4":  # Search book by author
-                        book_author = input("Please type the name of the book you want to search for: ").title()
+                        while True:
+                            try:
+                                book_author = search_book_author()
+                            except InvalidInput:
+                                print("Invalid name input")
+                                continue
+                            else:
+                                break
                         books_list = library_file.display_books()
+                        print(f"The books we have under the author: '{book_author}' -")
                         for key, value in books_list.items():
                             book: Book = value
                             if book.get_author() == book_author:
@@ -351,16 +363,23 @@ if __name__ == '__main__':
                     if librarian_customer_control == "2":  # Remove customer
                         while True:
                             try:
-                                customer_id = input("What is your Customer ID?: ")
+                                customer_id = input("What is the Customer ID?: ")
                                 check_customer_id(customer_id, library_file)
                             except InvalidCustomerID:
                                 print("ID not in our system, please try again")
                                 continue
                             else:
                                 break
-                        customer = library_file.get_customer(customer_id)
-                        if library_file.remove_customer(customer):
-                            print(f"The customer {customer.get_name()} has been removed from the library")
+                        try:
+                            if check_loans_for_customer(customer_id, library_file):
+                                customer = library_file.get_customer(customer_id)
+                                library_file.remove_customer(customer)
+                                print(f"The customer {customer.get_name()} has been removed from the library")
+                                break
+                        except LoanExists:
+                            print("This user have active loans, handle it before removing him.")
+                        else:
+                            break
                     if librarian_customer_control == "3":  # Find customer by name
                         customer_name = input("Please enter desired customer name: ").title()
                         customer_list = library_file.display_customers()
@@ -394,8 +413,8 @@ if __name__ == '__main__':
                             exit(0)
                     break
 
-    except Exception:
-        print("Something went wrong")
+    # except Exception:
+    #     print("Something went wrong")
     finally:
         pass
 

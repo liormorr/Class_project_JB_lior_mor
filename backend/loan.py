@@ -21,6 +21,9 @@ class Loan:
     def get_return_date(self):
         return self._return_date
 
+    def get_book_name(self):
+        return self._book_name
+
     def update_return_date(self, time_in_days: int, add=True):
         if add is True:
             self._return_date = self._return_date + timedelta(days=time_in_days)

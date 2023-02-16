@@ -48,3 +48,7 @@ class CustomerInsertionError(Exception):
 
 class InvalidLoan(Exception):
     pass
+
+
+class LoanExists(Exception):
+    pass
