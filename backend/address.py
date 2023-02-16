@@ -30,4 +30,4 @@ class Address:
         self._num = new_house_num
 
     def __str__(self):
-        return f"{self._city} {self._street} street, Number: {self._num}"
+        return f"{self._city}, {self._street} street, Number: {self._num}"
