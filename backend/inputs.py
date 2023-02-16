@@ -6,6 +6,7 @@ from backend.book import Book
 from backend.customer import Customer
 from backend.exceptions import *
 from backend.library import Library
+from backend.loan import Loan
 
 
 def choice_confirmation(confirmation: str):
@@ -42,9 +43,11 @@ def set_email_for_customer():
             return email
 
 
-def set_id_for_customer():
+def set_id_for_customer(library: Library):
     print("ID should contain at least 2 letters and preferably at least 1 number at the end")
     id_for_customer = input("Please Enter your desired ID: ")
+    if id_for_customer in library.display_customers().keys():
+        raise CustomerIDExists
     if not re.search("^[a-zA-Z]{2,}[0-9_]+$", id_for_customer):
         raise CustomerIDError
     else:
@@ -198,10 +201,10 @@ def set_loan_time_for_register():
             return loan_time_typed
 
 
-def customer_from_input():
+def customer_from_input(library: Library):
     first_name = set_first_name()
     last_name = set_last_name()
-    id = set_id_for_customer()
+    id = set_id_for_customer(library)
     email = set_email_for_customer()
     birth_day = set_birthday_for_customer()
     city = set_city_address()
@@ -314,6 +317,15 @@ def check_if_loaned(book_id: str, library: Library):
     else:
         return True
 
+
+def check_late_loans_for_customer(customer_id: str, library: Library):
+    late_loans = library.display_late_loans()
+    for key, value in late_loans.items():
+        loan: Loan = value
+        if loan.get_customer_id() == customer_id:
+            raise LateLoanExists
+    else:
+        return True
 
 
 def back_to_main_menu():
