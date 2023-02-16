@@ -35,7 +35,7 @@ class Book:
             self._loan_time = new_loan_time
             return True
         else:
-            raise Exception("Invalid input, options are 1 / 2 / 3")
+            return False
 
     def __str__(self):
         return f"{self._name}, by '{self._author}', // Book ID: {self._id}"
