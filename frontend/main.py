@@ -52,7 +52,14 @@ if __name__ == '__main__':
                         for key, value in customers.items():
                             if customer_id == key:
                                 customer = value
-                        print(f"Hello {customer.get_name()}, what would you like to do?")
+                                break
+                    print(f"Hello {customer.get_name()}, what would you like to do?")
+                    try:
+                        check_late_loans_for_customer(customer_id, library_file)
+                    except LateLoanExists:
+                        print("Seems that you have a loan that past its due date, you cannot loan another"
+                              " book at this moment")
+                        print("--- Returning to Main Menu ---")
                         break
                     display_books_to_customer(library_file)
                     books = library_file.display_books()
@@ -131,10 +138,12 @@ if __name__ == '__main__':
                                 if key == return_book_id:
                                     library_file.return_book(value, key, customer)
                                     print(f"The book: {value} safely returned")
+                    while True:
                         try:
                             next_step = back_to_main_menu()
                         except InvalidInput:
                             print("Invalid Input")
+                            continue
                         else:
                             if next_step == "1":
                                 print("Going back to Main Menu")
@@ -144,18 +153,20 @@ if __name__ == '__main__':
                             elif next_step == "2" or next_step == "$":
                                 print("Have a great day now, bye bye")
                                 exit(0)
-                            break
                         break
             while entity == "2":  # New Customer
                 print("Glad you are.")
                 while True:
                     try:
-                        customer = customer_from_input()
+                        customer = customer_from_input(library_file)
                     except InvalidInput:
                         print("Invalid Input")
                         continue
                     except CustomerIDError:
                         print("Error, ID should contain only letters and numbers (example: lm1)")
+                        continue
+                    except CustomerIDExists:
+                        print("Customer ID already exists in our system, try somthing else")
                         continue
                     except EmailError:
                         print("Error, email is invalid")
@@ -167,17 +178,25 @@ if __name__ == '__main__':
                         print("Error, somthing is wrong with your address")
                         continue
                     else:
-                        library_file.add_new_customer(customer)
-                        print(f"Great, you are now a customer at '{library_file.get_name()}'")
                         break
-                next_step = back_to_main_menu()
-                if next_step == "1":
-                    print("Going back to Main Menu")
-                    print("----------------------------")
+                library_file.add_new_customer(customer)
+                print(f"Great, you are now a customer at '{library_file.get_name()}'")
+                while True:
+                    try:
+                        next_step = back_to_main_menu()
+                    except InvalidInput:
+                        print("Invalid Input")
+                        continue
+                    else:
+                        if next_step == "1":
+                            print("Going back to Main Menu")
+                            print("----------------------------")
+                            entity = None
+                            break
+                        elif next_step == "2" or next_step == "$":
+                            print("Have a great day now, bye bye")
+                            exit(0)
                     break
-                elif next_step == "2" or next_step == "$":
-                    print("Have a great day now, bye bye")
-                    exit(0)
             while entity == "3":  # Librarian
                 print("What would you like to do?")
                 while True:
@@ -255,17 +274,21 @@ if __name__ == '__main__':
                     if librarian_book_control == "2":  # Remove book
                         books_list = library_file.display_books()
                         for key, value in books_list.items():
-                            print(value)
-                        choice = input("Choose a book by ID: ")
-                        for key, value in books_list.items():
-                            if choice == key:
-                                book_id = key
-                                while not library_file.remove_book(book_id):
-                                    print("Invalid key, try again")
-                                    continue
-                                else:
-                                    print(f"Great! the book {value} removed from the library")
-                                    break
+                            print(f"- {value}")
+                        while True:
+                            try:
+                                book_id = input("What is your choice (by Book ID)?: ")
+                                check_book_id(book_id, library_file)
+                            except InvalidBookID:
+                                print("The book id you entered is invalid")
+                                continue
+                            else:
+                                for key, value in books_list.items():
+                                    if key == book_id:
+                                        print(f"Great! the book {value} removed from the library")
+                                        library_file.remove_book(book_id)
+                                        break
+                            break
                     if librarian_book_control == "3":  # Search book by name
                         book_name = input("Please type the name of the book you want to search for: ").title()
                         books_list = library_file.display_books()
@@ -354,18 +377,27 @@ if __name__ == '__main__':
                             if customer.get_name() == customer_name:
                                 print(value)
                                 break
-            next_step = back_to_main_menu()
-            if next_step == "$" or next_step == "2":
-                print("Off with ya")
-                exit(0)
-            elif next_step == "1":
-                print("Going back to Main Menu")
-                print("----------------------------")
-                break
+                while True:
+                    try:
+                        next_step = back_to_main_menu()
+                    except InvalidInput:
+                        print("Invalid Input")
+                        continue
+                    else:
+                        if next_step == "1":
+                            print("Going back to Main Menu")
+                            print("----------------------------")
+                            entity = None
+                            break
+                        elif next_step == "2" or next_step == "$":
+                            print("Have a great day now, bye bye")
+                            exit(0)
+                    break
 
     except Exception:
         print("Something went wrong")
     finally:
         pass
+
         # with open('library.pickle', 'wb') as f:
         #     pickle.dump(library_file, f)
