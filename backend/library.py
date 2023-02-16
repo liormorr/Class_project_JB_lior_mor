@@ -41,13 +41,12 @@ class Library:
         if book_id not in self._library_books:
             self._library_books[book_id] = book
             return True
+        else:
+            return False
 
     def loan_book(self, book: Book, book_id: str, customer: Customer):
-        # Checking if the book is not already taken or even exists
         if book_id not in self._library_books:
-            raise Exception(f"The book id {book_id} is not on our shelf's")
-        if book_id in self._loaned_books:
-            raise Exception(f"The book is already loaned")
+            return False
         # Pulling relevant info about the book and the loan
         loan_time = book.get_loan_time_duration()  # timedelta
         date_today = datetime.today()
@@ -65,10 +64,13 @@ class Library:
 
     def return_book(self, book: Book, book_id: str, customer: Customer):
         if book_id not in self._loaned_books:
-            raise Exception(f"{book} is not loaned. are you sure its ours? should i call the police?")
+            return False
+        loan = None
+        for key, value in self._loaned_books.items():
+            if book_id == key:
+                loan = value
         self._loans_complete[datetime.now()] = \
-            {customer.get_name(): Loan(customer.get_id(),
-                                       book_id, self._loaned_books[book_id]["loan_start_time"], datetime.now())}
+            {customer.get_name(): loan}
         if book_id in self._late_loans.keys():
             del self._late_loans[book_id]
         if book_id in self._loaned_books.keys():
@@ -103,10 +105,6 @@ class Library:
             del self._library_books[book_id]
             return True
         else:
-            if book_id not in self._library_books.keys():
-                print("We dont have that book, therefor we cant remove it")
-            elif book_id in self._loaned_books.keys():
-                print("That book is currently loaned, we cant remove it")
             return False
 
     def check_late_loans(self):
