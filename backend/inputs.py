@@ -28,7 +28,7 @@ def check_book_id(book_id: str, library: Library):
 def set_birthday_for_customer():
     while True:
         birth_day = input("Please insert your birth date (DD-MM-YYYY): ")
-        if not re.search('^[0-3][0-9]-[0-3][0-9]-(?:[0-9][0-9])?[0-9][0-9]$', birth_day):
+        if not re.search('^[0-3][0-9]-[0-3][0-9]-[0-9][0-9][0-9][0-9]$', birth_day):
             raise BirthDayError
         else:
             return birth_day
